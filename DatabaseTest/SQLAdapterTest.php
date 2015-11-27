@@ -15,7 +15,9 @@ require_once __DIR__ . '/_PDOExtendedForTest.moc.php';
 class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 
 	/**
+	 * @covers SQLAdapter::__construct
 	 * @covers SQLAdapter::selectAll
+	 * @covers SQLAdapter::_exec
 	 */
 	public function test(){
 		$config = new PDOConfig(array());
@@ -26,6 +28,11 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 
 		$generator	= new BindParamGenerator();
 		$generator->equal_('field','value');
+
+		$response	= $adapter->selectAll('table_name','field1',$generator->generate());
+		$actual		= $response->getErrorCode();
+		$expected	= 'SELECT field1 FROM table_name WHERE field=:field_0';
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 
 		$response	= $adapter->selectAll('table_name',array('field1','field2'),$generator->generate());
 		$actual		= $response->getErrorCode();

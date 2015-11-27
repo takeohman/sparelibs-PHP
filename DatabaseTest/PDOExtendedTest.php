@@ -13,6 +13,7 @@ require_once __DIR__ . '/_PDOExtendedForTest.moc.php';
 class PDOExtendedTest extends PHPUnit_Framework_TestCase {
 
 	/**
+	 * @covers PDOExtended::__construct
 	 * @covers PDOExtended::prepAndExec
 	 */
 	public function test(){

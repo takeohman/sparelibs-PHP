@@ -12,6 +12,7 @@ require_once __DIR__ . '/_PDOStatementForTest.moc.php';
 class PDOResponseTest extends PHPUnit_Framework_TestCase {
 
 	/**
+	 * @covers PDOResponse::__construct
 	 * @covers PDOResponse::getErrorCode
 	 * @covers PDOResponse::getErrorInfo
 	 * @covers PDOResponse::fetchAll

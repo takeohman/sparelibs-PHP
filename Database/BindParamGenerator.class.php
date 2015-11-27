@@ -78,6 +78,23 @@ class BindParamGenerator {
 	}
 
 	/**
+	 * @return BindParamGenerator
+	 */
+	public function bgnBkt(){
+		$this->conditionList[] = "(";
+		return $this;
+	}
+
+	/**
+	 * @return BindParamGenerator
+	 */
+	public function endBkt(){
+		$this->conditionList[] = ")";
+		return $this;
+	}
+
+
+	/**
 	 * @param $fieldList
 	 * @return BindParamGenerator
 	 */

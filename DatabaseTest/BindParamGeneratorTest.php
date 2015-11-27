@@ -12,6 +12,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers BindParamGenerator::generate
+	 * @covers BindParamGenerator::__construct
 	 */
 	public function test_generate(){
 
@@ -32,6 +33,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers BindParamGenerator::equal_
+	 * @covers BindParamGenerator::_addParam
 	 */
 	public function test_equal_(){
 		$gen = new BindParamGenerator();
@@ -49,6 +51,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers BindParamGenerator::not_equal_
+	 * @covers BindParamGenerator::_addParam
 	 */
 	public function test_not_equal_(){
 		$gen = new BindParamGenerator();
@@ -112,6 +115,55 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 
 		$actual = $param->getParamArray();
 		$expected = array('field1_0'=>'value1','field2_1'=>'value2');
+		$this->assertEquals($expected, $actual);
+	}
+
+
+	/**
+	 * @covers BindParamGenerator::in_
+	 * @covers BindParamGenerator::_addWhereInParams
+	 */
+	public function test_in_(){
+		$gen = new BindParamGenerator();
+		$gen->in_('field',array(1,2,3,4,"5"));
+
+		$param = $gen->generate();
+		$actual = $param->getConditionStr();
+		$expected = "field IN (:field_0,:field_1,:field_2,:field_3,:field_4)";
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @covers BindParamGenerator::bgnBkt
+	 */
+	public function test_bgnBkt(){
+		$gen = new BindParamGenerator();
+		$gen->bgnBkt();
+
+		$param = $gen->generate();
+		$actual = $param->getConditionStr();
+		$expected = "(";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array();
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @covers BindParamGenerator::endBkt
+	 */
+	public function test_endBkt(){
+		$gen = new BindParamGenerator();
+		$gen->endBkt();
+
+		$param = $gen->generate();
+		$actual = $param->getConditionStr();
+		$expected = ")";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array();
 		$this->assertEquals($expected, $actual);
 	}
 }
