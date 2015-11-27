@@ -25,10 +25,13 @@ class BindParamGenerator {
 	 */
     protected $paramList = array();
 
+	/**
+	 *
+	 */
     public function __construct(){
-		$this->param_id = 0;
-		$this->conditionList = "";
-		$this->paramList = array();
+		$this->param_id		= 0;
+		$this->conditionList= array();
+		$this->paramList	= array();
     }
 
 	/**
@@ -74,6 +77,24 @@ class BindParamGenerator {
 		return $this->_addWhereInParams($field, $valueList);
 	}
 
+	/**
+	 * @param $fieldList
+	 * @return BindParamGenerator
+	 */
+	public function orderBy($fieldList){
+		$orderByStr = "";
+		foreach($fieldList as $field => $order){
+			if ($orderByStr != ""){
+				$orderByStr .= ',';
+			}
+			$orderByStr .= $field . ' ' .  $order;
+		}
+
+		if($orderByStr != ""){
+			$this->conditionList[] = " ORDER BY " . $orderByStr;
+		}
+		return $this;
+	}
 	/**
 	 * @return BindParam
 	 */

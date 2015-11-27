@@ -46,7 +46,7 @@ class SQLAdapter{
 	 * @param BindParam $params
 	 * @return bool|PDOResponse
 	 */
-	public function _exec($sql, $params){
+	protected function _exec($sql, $params){
 		$paramArray = array();
 		if($params){
 			$condition = $params->getConditionStr();
