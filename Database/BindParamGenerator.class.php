@@ -18,7 +18,7 @@ class BindParamGenerator {
 	/**
 	 * @var array|string
 	 */
-    protected $conditionList = array();
+    protected $phraseList = array();
 
 	/**
 	 * @var array
@@ -30,7 +30,7 @@ class BindParamGenerator {
 	 */
     public function __construct(){
 		$this->param_id		= 0;
-		$this->conditionList= array();
+		$this->phraseList= array();
 		$this->paramList	= array();
     }
 
@@ -56,7 +56,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
     public function and_(){
-        $this->conditionList[] = " AND ";
+        $this->phraseList[] = " AND ";
         return $this;
     }
 
@@ -64,7 +64,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
     public function or_(){
-        $this->conditionList[] = " OR ";
+        $this->phraseList[] = " OR ";
         return $this;
     }
 
@@ -81,7 +81,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
 	public function bgnBkt(){
-		$this->conditionList[] = "(";
+		$this->phraseList[] = "(";
 		return $this;
 	}
 
@@ -89,7 +89,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
 	public function endBkt(){
-		$this->conditionList[] = ")";
+		$this->phraseList[] = ")";
 		return $this;
 	}
 
@@ -108,7 +108,7 @@ class BindParamGenerator {
 		}
 
 		if($orderByStr != ""){
-			$this->conditionList[] = " ORDER BY " . $orderByStr;
+			$this->phraseList[] = " ORDER BY " . $orderByStr;
 		}
 		return $this;
 	}
@@ -117,7 +117,7 @@ class BindParamGenerator {
 	 */
     public function generate(){
         $str = "";
-        foreach($this->conditionList as $item){
+        foreach($this->phraseList as $item){
             $str .= $item;
         }
 
@@ -135,7 +135,7 @@ class BindParamGenerator {
 	 */
     protected function _addParam($field, $value, $condition){
         $fieldName = $field . '_'.$this->param_id;
-        $this->conditionList[] = $field . $condition . $this->mark . $fieldName;
+        $this->phraseList[] = $field . $condition . $this->mark . $fieldName;
         $this->paramList[$fieldName] = $value;
         $this->param_id++;
         return $this;
@@ -158,8 +158,56 @@ class BindParamGenerator {
 			$this->param_id++;
 		}
 		if($fieldStr != ""){
-			$this->conditionList[] = $field . " IN " . "($fieldStr)";
+			$this->phraseList[] = $field . " IN " . "($fieldStr)";
 		}
+		return $this;
+	}
+
+	/**
+	 * @param $keyValueList
+	 * @return BindParamGenerator
+	 * $keyValueList[$key]=$value
+	 *
+	 * INSERT INTO table ($key1, $key2) VALUES (:$key1, :$key2)
+	 */
+	public function insert_values($keyValueList){
+		$fieldsStr = "";
+		$valuesStr = "";
+		foreach($keyValueList as $key => $value){
+			$fieldName = $key . '_'.$this->param_id;
+
+			if($fieldsStr != ""){
+				$fieldsStr .= ',';
+				$valuesStr .= ',';
+			}
+
+			$fieldsStr .= $key;
+			$valuesStr .= $this->mark . $fieldName;
+			$this->paramList[$fieldName] = $value;
+			$this->param_id++;
+		}
+		$this->phraseList[] = '(';
+		$this->phraseList[] = $fieldsStr;
+		$this->phraseList[] = ') VALUES (';
+		$this->phraseList[] = $valuesStr;
+		$this->phraseList[] = ')';
+		return $this;
+	}
+
+	public function update_set_values($keyValueList){
+		$fieldsStr = "";
+		foreach($keyValueList as $key => $value){
+			$fieldName = $key . '_'.$this->param_id;
+
+			if($fieldsStr != ""){
+				$fieldsStr .= ',';
+			}
+
+			$fieldsStr .= $key.'='.$this->mark . $fieldName;
+			$this->paramList[$fieldName] = $value;
+			$this->param_id++;
+		}
+		$this->phraseList[] = $fieldsStr;
 		return $this;
 	}
 }

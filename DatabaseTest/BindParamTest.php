@@ -12,7 +12,7 @@ class BindParamTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers BindParam::__construct
-	 * @covers BindParam::getConditionStr
+	 * @covers BindParam::getPhraseStr
 	 * @covers BindParam::getParamArray
 	 */
 	public function testBindParam(){
@@ -20,7 +20,7 @@ class BindParamTest extends PHPUnit_Framework_TestCase {
 		$param_array = array(1,2,"3");
 
 		$param = new BindParam($cond_str, $param_array);
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = $cond_str;
 		$this->assertEquals($expected, $actual);
 

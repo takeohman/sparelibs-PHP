@@ -7,7 +7,7 @@ class BindParam {
 	/**
 	 * @var string
 	 */
-    protected $conditionStr = "";
+    protected $phraseStr = "";
 
 	/**
 	 * @var array
@@ -19,15 +19,15 @@ class BindParam {
 	 * @param array $paramArray
 	 */
     public function __construct($conditionStr, $paramArray){
-        $this->conditionStr = $conditionStr;
+        $this->phraseStr = $conditionStr;
         $this->paramArray   = $paramArray;
     }
 
 	/**
 	 * @return string
 	 */
-	public function getConditionStr(){
-		return $this->conditionStr;
+	public function getPhraseStr(){
+		return $this->phraseStr;
 	}
 
 	/**

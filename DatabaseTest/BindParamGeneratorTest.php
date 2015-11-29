@@ -40,7 +40,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field_name','value');
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "field_name=:field_name_0";
 		$this->assertEquals($expected, $actual);
 
@@ -58,7 +58,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->not_equal_('field_name','value');
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "field_name!=:field_name_0";
 		$this->assertEquals($expected, $actual);
 
@@ -75,7 +75,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field1','value1')->and_()->equal_('field2','value2');
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "field1=:field1_0 AND field2=:field2_1";
 		$this->assertEquals($expected, $actual);
 
@@ -92,7 +92,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field1','value1')->or_()->equal_('field2','value2');
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "field1=:field1_0 OR field2=:field2_1";
 		$this->assertEquals($expected, $actual);
 
@@ -109,7 +109,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field1','value1')->or_()->equal_('field2','value2')->orderBy(array('field1'=>'ASC', 'field2'=>'DESC'));
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "field1=:field1_0 OR field2=:field2_1 ORDER BY field1 ASC,field2 DESC";
 		$this->assertEquals($expected, $actual);
 
@@ -128,7 +128,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->in_('field',array(1,2,3,4,"5"));
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "field IN (:field_0,:field_1,:field_2,:field_3,:field_4)";
 		$this->assertEquals($expected, $actual);
 	}
@@ -141,7 +141,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->bgnBkt();
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = "(";
 		$this->assertEquals($expected, $actual);
 
@@ -158,12 +158,64 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->endBkt();
 
 		$param = $gen->generate();
-		$actual = $param->getConditionStr();
+		$actual = $param->getPhraseStr();
 		$expected = ")";
 		$this->assertEquals($expected, $actual);
 
 		$actual = $param->getParamArray();
 		$expected = array();
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @covers BindParamGenerator::insert_values
+	 */
+	public function test_insert_values(){
+		$gen = new BindParamGenerator();
+		$gen->insert_values(
+			array(
+				'field1'=>'value1',
+				'field2'=>'value2',
+				'field3'=>'value3',
+			)
+		);
+		$param = $gen->generate();
+		$actual = $param->getPhraseStr();
+		$expected = "(field1,field2,field3) VALUES (:field1_0,:field2_1,:field3_2)";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array(
+			'field1_0'=>'value1',
+			'field2_1'=>'value2',
+			'field3_2'=>'value3',
+		);
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @covers BindParamGenerator::insert_values
+	 */
+	public function test_update_set_values(){
+		$gen = new BindParamGenerator();
+		$gen->update_set_values(
+			array(
+				'field1'=>'value1',
+				'field2'=>'value2',
+				'field3'=>'value3',
+			)
+		);
+		$param = $gen->generate();
+		$actual = $param->getPhraseStr();
+		$expected = "field1=:field1_0,field2=:field2_1,field3=:field3_2";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array(
+			'field1_0'=>'value1',
+			'field2_1'=>'value2',
+			'field3_2'=>'value3',
+		);
 		$this->assertEquals($expected, $actual);
 	}
 }

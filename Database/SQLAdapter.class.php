@@ -21,7 +21,28 @@ class SQLAdapter{
 		$this->pdo = $pdo;
 	}
 
+	/**
+	 * @param string $table
+	 * @param BindParam $params
+	 * @param bool $isIgnore
+	 * @return bool|PDOResponse
+	 */
+	public function insert($table, $params, $isIgnore=false){
 
+		$sql = 'INSERT ' . ($isIgnore?'IGNORE':'') . 'INTO ' . "$table ";
+		$paramArray = array();
+
+		if($params){
+			$phrase = $params->getPhraseStr();		//(field...)VALUES(:field...)
+			$paramArray= $params->getParamArray();
+
+			if($phrase != ""){
+				$sql .= $phrase;
+			}
+		}
+
+		return $this->pdo->prepAndExec($sql, $paramArray);
+	}
 	/**
 	 * @param $table
 	 * @param $fields
@@ -37,23 +58,38 @@ class SQLAdapter{
 		}
 		$sql = "SELECT $field FROM $table";
 
-
-		return $this->_exec($sql, $params);
-	}
-
-	/**
-	 * @param string $sql
-	 * @param BindParam $params
-	 * @return bool|PDOResponse
-	 */
-	protected function _exec($sql, $params){
 		$paramArray = array();
+
 		if($params){
-			$condition = $params->getConditionStr();
+			$phrase = $params->getPhraseStr();
 			$paramArray= $params->getParamArray();
 
-			if($condition != ""){
-				$sql .= " WHERE " . $condition;
+			if($phrase != ""){
+				$sql .= " WHERE " . $phrase;
+			}
+		}
+
+		return $this->pdo->prepAndExec($sql, $paramArray);
+	}
+
+
+	/**
+	 * @param string $table
+	 * @param BindParam $params
+	 * @param bool $isIgnore
+	 * @return bool|PDOResponse
+	 */
+	public function update($table, $params){
+
+		$sql = 'UPDATE ' . $table;
+		$paramArray = array();
+
+		if($params){
+			$phrase = $params->getPhraseStr();		//(field...)VALUES(:field...)
+			$paramArray= $params->getParamArray();
+
+			if($phrase != ""){
+				$sql .= $phrase;
 			}
 		}
 
