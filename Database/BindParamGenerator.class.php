@@ -8,7 +8,7 @@ class BindParamGenerator {
 	/**
 	 * @var int
 	 */
-    protected $param_id = 0;
+    protected static $param_id = 0;
 
 	/**
 	 * @var string
@@ -34,7 +34,7 @@ class BindParamGenerator {
 	 *
 	 */
     public function __construct(){
-		$this->param_id		= 0;
+		self::$param_id		= 0;
 		$this->conditionList= array();
 		$this->phraseList	= array();
 		$this->paramList	= array();
@@ -147,10 +147,10 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
     protected function _addParam($field, $value, $condition){
-        $fieldName = $field . '_'.$this->param_id;
+        $fieldName = $field . '_'.self::$param_id;
         $this->conditionList[] = $field . $condition . $this->mark . $fieldName;
         $this->paramList[$fieldName] = $value;
-        $this->param_id++;
+        self::$param_id++;
         return $this;
     }
 
@@ -162,13 +162,13 @@ class BindParamGenerator {
 	protected function _addWhereInParams($field, $valueList){
 		$fieldStr = "";
 		foreach((array)$valueList as $value){
-			$fieldName = $field . '_'.$this->param_id;
+			$fieldName = $field . '_'.self::$param_id;
 			if($fieldStr != ""){
 				$fieldStr .= ',';
 			}
 			$fieldStr .= $this->mark . $fieldName;
 			$this->paramList[$fieldName] = $value;
-			$this->param_id++;
+			self::$param_id++;
 		}
 		if($fieldStr != ""){
 			$this->conditionList[] = $field . " IN " . "($fieldStr)";
@@ -187,7 +187,7 @@ class BindParamGenerator {
 		$fieldsStr = "";
 		$valuesStr = "";
 		foreach($keyValueList as $key => $value){
-			$fieldName = $key . '_'.$this->param_id;
+			$fieldName = $key . '_'.self::$param_id;
 
 			if($fieldsStr != ""){
 				$fieldsStr .= ',';
@@ -197,7 +197,7 @@ class BindParamGenerator {
 			$fieldsStr .= $key;
 			$valuesStr .= $this->mark . $fieldName;
 			$this->paramList[$fieldName] = $value;
-			$this->param_id++;
+			self::$param_id++;
 		}
 		$this->phraseList[] = '(';
 		$this->phraseList[] = $fieldsStr;
@@ -207,10 +207,27 @@ class BindParamGenerator {
 		return $this;
 	}
 
+	/**
+	 * @param $keyValueList
+	 * @return BindParamGenerator
+	 */
+	public function on_duplicate_key_update($keyValueList){
+		if(count($keyValueList)){
+			$phrase = " ON DUPLICATE KEY UPDATE ";
+			$this->phraseList[] = $phrase;
+			return $this->update_set_values($keyValueList);
+		}
+		return $this;
+	}
+
+	/**
+	 * @param $keyValueList
+	 * @return BindParamGenerator
+	 */
 	public function update_set_values($keyValueList){
 		$fieldsStr = "";
 		foreach($keyValueList as $key => $value){
-			$fieldName = $key . '_'.$this->param_id;
+			$fieldName = $key . '_'.self::$param_id;
 
 			if($fieldsStr != ""){
 				$fieldsStr .= ',';
@@ -218,7 +235,7 @@ class BindParamGenerator {
 
 			$fieldsStr .= $key.'='.$this->mark . $fieldName;
 			$this->paramList[$fieldName] = $value;
-			$this->param_id++;
+			self::$param_id++;
 		}
 		$this->phraseList[] = $fieldsStr;
 		return $this;

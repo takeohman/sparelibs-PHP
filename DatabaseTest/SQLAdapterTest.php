@@ -146,7 +146,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @covers SQLAdapter::__construct
 	 * @covers SQLAdapter::selectAll
-	 * @covers SQLAdapter::insert_values
+	 * @covers SQLAdapter::insert
 	 */
 	public function test_insert(){
 		$config = new PDOConfig(array(
@@ -191,12 +191,47 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 			),
 		);
 		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		#
+		# insert on duplicate key update ...
+		#
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->insert_values(array(
+			'ID'=>5,
+			'FIELD1'=>'f5_1',
+			'FIELD2'=>'f5_2',
+			'FIELD3'=>'f5_3',
+		))->on_duplicate_key_update(array('FIELD3'=>'f5_3_duplicate'));
+
+		$response = $adapter->insert('TBL_TEST',$generator->generate());
+		$actual = $response->getErrorCode();
+		$expected = '00000';
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		#
+		# Select
+		#
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->equal_('ID',5);
+
+		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$actual = $response->fetchAll();
+		$expected = array(
+			0 => array(
+				'ID'=>'5',
+				'FIELD1'=>'f5_1',
+				'FIELD3'=>'f5_3_duplicate',
+			),
+		);
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 	}
 
 	/**
 	 * @covers SQLAdapter::__construct
 	 * @covers SQLAdapter::selectAll
-	 * @covers SQLAdapter::insert_values
+	 * @covers SQLAdapter::update
 	 */
 	public function test_update(){
 		$config = new PDOConfig(array(

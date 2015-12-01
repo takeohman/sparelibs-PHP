@@ -194,6 +194,50 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * @covers BindParamGenerator::on_duplicate_key_update
+	 * @covers BindParamGenerator::generate
+	 */
+	public function test_on_duplicate_key_update(){
+		$gen = new BindParamGenerator();
+		$gen->insert_values(
+			array(
+				'field1'=>'value1',
+				'field2'=>'value2',
+				'field3'=>'value3',
+			)
+		)->on_duplicate_key_update(array());
+		$param = $gen->generate();
+		$actual = $param->getPhraseStr();
+		$expected = "(field1,field2,field3) VALUES (:field1_0,:field2_1,:field3_2)";
+		$this->assertEquals($expected, $actual);
+
+
+		$gen = new BindParamGenerator();
+		$gen->insert_values(
+			array(
+				'ID'	=>'2',
+				'field1'=>'value1',
+				'field2'=>'value2',
+				'field3'=>'value3',
+			)
+		)->on_duplicate_key_update(array('field2'=>'value2_duplicate'));
+		$param = $gen->generate();
+		$actual = $param->getPhraseStr();
+		$expected = "(ID,field1,field2,field3) VALUES (:ID_0,:field1_1,:field2_2,:field3_3) ON DUPLICATE KEY UPDATE field2=:field2_4";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array(
+			'ID_0'	=> 2,
+			'field1_1'=>'value1',
+			'field2_2'=>'value2',
+			'field3_3'=>'value3',
+			'field2_4'=>'value2_duplicate',
+		);
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
 	 * @covers BindParamGenerator::update_set_values
 	 */
 	public function test_update_set_values(){

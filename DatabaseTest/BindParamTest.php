@@ -14,6 +14,7 @@ class BindParamTest extends PHPUnit_Framework_TestCase {
 	 * @covers BindParam::__construct
 	 * @covers BindParam::getPhraseStr
 	 * @covers BindParam::getParamArray
+	 * @covers BindParam::getConditionStr
 	 */
 	public function testBindParam(){
 		$cond_str = "condition string";
