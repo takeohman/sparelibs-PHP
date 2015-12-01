@@ -19,14 +19,14 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 
 		$gen = new BindParamGenerator();
 		$actual = $gen->generate();
-		$expected = new BindParam("",array());
+		$expected = new BindParam(array(),"");
 		$this->assertEquals($expected, $actual);
 
 
 		$gen = new BindParamGenerator();
 		$gen->equal_('field_name','value');
 		$actual = $gen->generate();
-		$expected = new BindParam("field_name=:field_name_0",array('field_name_0'=>'value'));
+		$expected = new BindParam(array('field_name_0'=>'value'),"field_name=:field_name_0");
 		$this->assertEquals($expected, $actual);
 
 	}
@@ -40,7 +40,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field_name','value');
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "field_name=:field_name_0";
 		$this->assertEquals($expected, $actual);
 
@@ -58,7 +58,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->not_equal_('field_name','value');
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "field_name!=:field_name_0";
 		$this->assertEquals($expected, $actual);
 
@@ -75,7 +75,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field1','value1')->and_()->equal_('field2','value2');
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "field1=:field1_0 AND field2=:field2_1";
 		$this->assertEquals($expected, $actual);
 
@@ -92,7 +92,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field1','value1')->or_()->equal_('field2','value2');
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "field1=:field1_0 OR field2=:field2_1";
 		$this->assertEquals($expected, $actual);
 
@@ -109,7 +109,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->equal_('field1','value1')->or_()->equal_('field2','value2')->orderBy(array('field1'=>'ASC', 'field2'=>'DESC'));
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "field1=:field1_0 OR field2=:field2_1 ORDER BY field1 ASC,field2 DESC";
 		$this->assertEquals($expected, $actual);
 
@@ -128,7 +128,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->in_('field',array(1,2,3,4,"5"));
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "field IN (:field_0,:field_1,:field_2,:field_3,:field_4)";
 		$this->assertEquals($expected, $actual);
 	}
@@ -141,7 +141,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->bgnBkt();
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = "(";
 		$this->assertEquals($expected, $actual);
 
@@ -158,7 +158,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 		$gen->endBkt();
 
 		$param = $gen->generate();
-		$actual = $param->getPhraseStr();
+		$actual = $param->getConditionStr();
 		$expected = ")";
 		$this->assertEquals($expected, $actual);
 
@@ -194,7 +194,7 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @covers BindParamGenerator::insert_values
+	 * @covers BindParamGenerator::update_set_values
 	 */
 	public function test_update_set_values(){
 		$gen = new BindParamGenerator();

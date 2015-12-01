@@ -61,7 +61,7 @@ class SQLAdapter{
 		$paramArray = array();
 
 		if($params){
-			$phrase = $params->getPhraseStr();
+			$phrase = $params->getConditionStr();
 			$paramArray= $params->getParamArray();
 
 			if($phrase != ""){
@@ -89,7 +89,13 @@ class SQLAdapter{
 			$paramArray= $params->getParamArray();
 
 			if($phrase != ""){
-				$sql .= $phrase;
+				$sql .= " SET $phrase";
+			}
+
+			$condition = $params->getConditionStr();
+
+			if($condition != ""){
+				$sql .= " WHERE $condition";
 			}
 		}
 

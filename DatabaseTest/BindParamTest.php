@@ -17,15 +17,20 @@ class BindParamTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testBindParam(){
 		$cond_str = "condition string";
+		$phrase_str="phrase string";
 		$param_array = array(1,2,"3");
 
-		$param = new BindParam($cond_str, $param_array);
-		$actual = $param->getPhraseStr();
+		$param = new BindParam($param_array, $cond_str, $phrase_str);
+		$actual = $param->getConditionStr();
 		$expected = $cond_str;
 		$this->assertEquals($expected, $actual);
 
 		$actual = $param->getParamArray();
 		$expected = $param_array;
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getPhraseStr();
+		$expected = $phrase_str;
 		$this->assertEquals($expected, $actual);
 	}
 }

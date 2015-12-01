@@ -199,6 +199,46 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 	 * @covers SQLAdapter::insert_values
 	 */
 	public function test_update(){
+		$config = new PDOConfig(array(
 
+			'database'  => 'test',
+			'pass'      => '',
+			//'host'      => 'localhost',
+			//'user'      => 'root',
+		));
+		$pdo 	= new PDOExtended($config);
+
+
+		#
+		# Insert
+		#
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->update_set_values(array(
+			'FIELD1'=>'f4_1_update',
+			'FIELD2'=>'f4_2_update',
+			'FIELD3'=>'f4_3_update',
+		))->equal_('ID',4);
+		$response = $adapter->update('TBL_TEST',$generator->generate());
+		$actual = $response->getErrorCode();
+		$expected = '00000';
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+		#
+		# Select with WHERE IN and ORDER BY
+		#
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->equal_('ID',4);
+
+		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$actual = $response->fetchAll();
+		$expected = array(
+			0 => array(
+				'ID'=>'4',
+				'FIELD1'=>'f4_1_update',
+				'FIELD3'=>'f4_3_update',
+			),
+		);
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 	}
 }

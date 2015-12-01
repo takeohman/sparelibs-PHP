@@ -18,7 +18,12 @@ class BindParamGenerator {
 	/**
 	 * @var array|string
 	 */
-    protected $phraseList = array();
+    protected $conditionList = array();
+
+	/**
+	 * @var array
+	 */
+	protected $phraseList	= array();
 
 	/**
 	 * @var array
@@ -30,7 +35,8 @@ class BindParamGenerator {
 	 */
     public function __construct(){
 		$this->param_id		= 0;
-		$this->phraseList= array();
+		$this->conditionList= array();
+		$this->phraseList	= array();
 		$this->paramList	= array();
     }
 
@@ -56,7 +62,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
     public function and_(){
-        $this->phraseList[] = " AND ";
+        $this->conditionList[] = " AND ";
         return $this;
     }
 
@@ -64,7 +70,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
     public function or_(){
-        $this->phraseList[] = " OR ";
+        $this->conditionList[] = " OR ";
         return $this;
     }
 
@@ -81,7 +87,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
 	public function bgnBkt(){
-		$this->phraseList[] = "(";
+		$this->conditionList[] = "(";
 		return $this;
 	}
 
@@ -89,7 +95,7 @@ class BindParamGenerator {
 	 * @return BindParamGenerator
 	 */
 	public function endBkt(){
-		$this->phraseList[] = ")";
+		$this->conditionList[] = ")";
 		return $this;
 	}
 
@@ -108,7 +114,7 @@ class BindParamGenerator {
 		}
 
 		if($orderByStr != ""){
-			$this->phraseList[] = " ORDER BY " . $orderByStr;
+			$this->conditionList[] = " ORDER BY " . $orderByStr;
 		}
 		return $this;
 	}
@@ -116,14 +122,21 @@ class BindParamGenerator {
 	 * @return BindParam
 	 */
     public function generate(){
-        $str = "";
-        foreach($this->phraseList as $item){
-            $str .= $item;
+        $cond_str = "";
+        foreach($this->conditionList as $item){
+            $cond_str .= $item;
         }
 
+		$phrase_str = "";
+		foreach($this->phraseList as $item){
+			$phrase_str .= $item;
+		}
+
+
         return new BindParam(
-            $str,
-            $this->paramList
+			$this->paramList,
+            $cond_str,
+			$phrase_str
         );
     }
 
@@ -135,7 +148,7 @@ class BindParamGenerator {
 	 */
     protected function _addParam($field, $value, $condition){
         $fieldName = $field . '_'.$this->param_id;
-        $this->phraseList[] = $field . $condition . $this->mark . $fieldName;
+        $this->conditionList[] = $field . $condition . $this->mark . $fieldName;
         $this->paramList[$fieldName] = $value;
         $this->param_id++;
         return $this;
@@ -158,7 +171,7 @@ class BindParamGenerator {
 			$this->param_id++;
 		}
 		if($fieldStr != ""){
-			$this->phraseList[] = $field . " IN " . "($fieldStr)";
+			$this->conditionList[] = $field . " IN " . "($fieldStr)";
 		}
 		return $this;
 	}
