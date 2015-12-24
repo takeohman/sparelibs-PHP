@@ -240,4 +240,24 @@ class BindParamGenerator {
 		$this->phraseList[] = $fieldsStr;
 		return $this;
 	}
+
+	/**
+	 * @param int $a
+	 * @param int|null $b
+	 */
+	public function limit($a, $b=null){
+
+//		if ($b !== null && is_int($b)){
+//
+//		}
+
+		if ($a !== null && is_int($a)){
+			$limit = "$a";
+			if ($b !== null && is_int($b)){
+				$limit .= ",$b";
+			}
+			$this->conditionList[] = " LIMIT $limit";
+		}
+		return;
+	}
 }

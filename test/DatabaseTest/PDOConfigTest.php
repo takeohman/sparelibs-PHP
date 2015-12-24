@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../Database/PDOConfig.class.php';
+require_once __DIR__ . '/../../Database/PDOConfig.class.php';
 /**
  * Created by PhpStorm.
  * User: takeoh

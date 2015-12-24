@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../Database/BindParamGenerator.class.php';
+require_once __DIR__ . '/../../Database/BindParamGenerator.class.php';
 
 /**
  * Created by PhpStorm.
@@ -260,6 +260,56 @@ class BindParamGeneratorTest extends PHPUnit_Framework_TestCase {
 			'field2_1'=>'value2',
 			'field3_2'=>'value3',
 		);
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function test_limit(){
+
+		#
+		# invalid value
+		#
+		$gen = new BindParamGenerator();
+		$gen->limit(null);
+
+		$param = $gen->generate();
+		$actual = $param->getConditionStr();
+		$expected = "";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array();
+		$this->assertEquals($expected, $actual);
+
+
+		#
+		# one parameter
+		#
+		$gen = new BindParamGenerator();
+		$gen->limit(1);
+
+		$param = $gen->generate();
+		$actual = $param->getConditionStr();
+		$expected = " LIMIT 1";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array();
+		$this->assertEquals($expected, $actual);
+
+
+		#
+		# two parameters
+		#
+		$gen = new BindParamGenerator();
+		$gen->limit(0,3);
+
+		$param = $gen->generate();
+		$actual = $param->getConditionStr();
+		$expected = " LIMIT 0,3";
+		$this->assertEquals($expected, $actual);
+
+		$actual = $param->getParamArray();
+		$expected = array();
 		$this->assertEquals($expected, $actual);
 	}
 }

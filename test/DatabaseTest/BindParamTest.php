@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../Database/BindParam.class.php';
+require_once __DIR__ . '/../../Database/BindParam.class.php';
 /**
  * Created by PhpStorm.
  * User: takeoh

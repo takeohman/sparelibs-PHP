@@ -27,7 +27,7 @@ class PDOExtended extends PDO{
     public function prepAndExec($sql, $params){
         $st = $this->prepare($sql);
         $st->execute($params);
-        return new PDOResponse($st);
+		return new PDOResponse($st);
     }
 }
 

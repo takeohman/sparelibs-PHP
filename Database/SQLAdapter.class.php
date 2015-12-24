@@ -49,7 +49,7 @@ class SQLAdapter{
 	 * @param BindParam $params
 	 * @return bool|PDOResponse
 	 */
-	public function selectAll($table, $fields, $params = null){
+	public function select($table, $fields, $params = null){
 
 		if(is_array($fields)){
 			$field = implode(',',$fields);
@@ -76,7 +76,6 @@ class SQLAdapter{
 	/**
 	 * @param string $table
 	 * @param BindParam $params
-	 * @param bool $isIgnore
 	 * @return bool|PDOResponse
 	 */
 	public function update($table, $params){
@@ -100,5 +99,24 @@ class SQLAdapter{
 		}
 
 		return $this->pdo->prepAndExec($sql, $paramArray);
+	}
+
+	/**
+	 * @param string $table
+	 * @param BindParam $params
+	 * @return bool|PDOResponse
+	 */
+	public function delete($table, $params){
+		$sql = 'DELETE FROM ' . $table;
+		if($params){
+			$paramArray= $params->getParamArray();
+			$condition = $params->getConditionStr();
+
+			if($condition != ""){
+				$sql .= " WHERE $condition";
+				return $this->pdo->prepAndExec($sql, $paramArray);
+			}
+		}
+		return false;
 	}
 }

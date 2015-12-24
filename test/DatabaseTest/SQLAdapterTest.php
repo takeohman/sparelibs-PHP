@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ .'/../Database/SQLAdapter.class.php';
-require_once __DIR__ .'/../Database/BindParamGenerator.class.php';
+require_once __DIR__ .'/../../Database/SQLAdapter.class.php';
+require_once __DIR__ .'/../../Database/BindParamGenerator.class.php';
 require_once __DIR__ . '/_PDOExtendedForTest.moc.php';
 
 /**
@@ -33,7 +33,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 	}
 	/**
 	 * @covers SQLAdapter::__construct
-	 * @covers SQLAdapter::selectAll
+	 * @covers SQLAdapter::select
 	 */
 	public function test(){
 		$config = new PDOConfig(array());
@@ -45,12 +45,12 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$generator	= new BindParamGenerator();
 		$generator->equal_('field','value');
 
-		$response	= $adapter->selectAll('table_name','field1',$generator->generate());
+		$response	= $adapter->select('table_name','field1',$generator->generate());
 		$actual		= $response->getErrorCode();
 		$expected	= 'SELECT field1 FROM table_name WHERE field=:field_0';
 		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 
-		$response	= $adapter->selectAll('table_name',array('field1','field2'),$generator->generate());
+		$response	= $adapter->select('table_name',array('field1','field2'),$generator->generate());
 		$actual		= $response->getErrorCode();
 		$expected	= 'SELECT field1,field2 FROM table_name WHERE field=:field_0';
 		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
@@ -63,9 +63,9 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers SQLAdapter::__construct
-	 * @covers SQLAdapter::selectAll
+	 * @covers SQLAdapter::select
 	 */
-	public function testSelectAll(){
+	public function testSelect(){
 		$config = new PDOConfig(array(
 
 			'database'  => 'test',
@@ -82,7 +82,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$adapter= new SQLAdapter($pdo);
 		$generator	= new BindParamGenerator();
 		$generator->equal_('ID','3');
-		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
 		$actual = $response->fetchAll();
 		$expected = array(
 			0 => array(
@@ -102,7 +102,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$generator	= new BindParamGenerator();
 		$generator->in_('ID',array(2,4));
 
-		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
 		$actual = $response->fetchAll();
 		$expected = array(
 			0 => array(
@@ -125,7 +125,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$generator	= new BindParamGenerator();
 		$generator->in_('FIELD1',array('f2_1','f4_1'))->orderBy(array('ID'=>'DESC'));
 
-		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
 		$actual = $response->fetchAll();
 		$expected = array(
 			0 => array(
@@ -145,7 +145,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers SQLAdapter::__construct
-	 * @covers SQLAdapter::selectAll
+	 * @covers SQLAdapter::select
 	 * @covers SQLAdapter::insert
 	 */
 	public function test_insert(){
@@ -181,7 +181,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$generator	= new BindParamGenerator();
 		$generator->equal_('ID',5);
 
-		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
 		$actual = $response->fetchAll();
 		$expected = array(
 			0 => array(
@@ -216,7 +216,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$generator	= new BindParamGenerator();
 		$generator->equal_('ID',5);
 
-		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
 		$actual = $response->fetchAll();
 		$expected = array(
 			0 => array(
@@ -230,7 +230,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers SQLAdapter::__construct
-	 * @covers SQLAdapter::selectAll
+	 * @covers SQLAdapter::select
 	 * @covers SQLAdapter::update
 	 */
 	public function test_update(){
@@ -245,7 +245,7 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 
 
 		#
-		# Insert
+		# update
 		#
 		$adapter= new SQLAdapter($pdo);
 		$generator	= new BindParamGenerator();
@@ -259,13 +259,13 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 		$expected = '00000';
 		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 		#
-		# Select with WHERE IN and ORDER BY
+		# Select an updated data
 		#
 		$adapter= new SQLAdapter($pdo);
 		$generator	= new BindParamGenerator();
 		$generator->equal_('ID',4);
 
-		$response	= $adapter->selectAll('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
 		$actual = $response->fetchAll();
 		$expected = array(
 			0 => array(
@@ -274,6 +274,53 @@ class SQLAdapterTest extends PHPUnit_Framework_TestCase {
 				'FIELD3'=>'f4_3_update',
 			),
 		);
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+	}
+
+
+	/**
+	 * @covers SQLAdapter::__construct
+	 * @covers SQLAdapter::select
+	 * @covers SQLAdapter::delete
+	 */
+	public function test_delete(){
+		$config = new PDOConfig(array(
+
+			'database'  => 'test',
+			'pass'      => '',
+			//'host'      => 'localhost',
+			//'user'      => 'root',
+		));
+		$pdo 	= new PDOExtended($config);
+
+
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->equal_('ID',4);
+		$actual = $adapter->delete('TBL_TEST',null);
+		$expected = false;
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		#
+		# delete
+		#
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->equal_('ID',4);
+		$response = $adapter->delete('TBL_TEST',$generator->generate());
+		$actual = $response->getErrorCode();
+		$expected = '00000';
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+		#
+		# try to select a deleted data
+		#
+		$adapter= new SQLAdapter($pdo);
+		$generator	= new BindParamGenerator();
+		$generator->equal_('ID',4);
+
+		$response	= $adapter->select('TBL_TEST',array('ID','FIELD1','FIELD3'),$generator->generate());
+		$actual = $response->fetchAll();
+		$expected = array();
 		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 	}
 }
