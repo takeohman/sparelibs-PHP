@@ -3,11 +3,5 @@
     "description": "my lib",
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
-    },
-    "authors": [
-        {
-            "name": "Takeo Hidaka",
-            "email": "takeohman@gmail.com"
-        }
-    ]
+    }
 }
