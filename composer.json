@@ -1,6 +1,6 @@
 {
-    "name": "takeoh/dblib",
-    "description": "my lib",
+    "name": "spare libs PHP",
+    "description": "sparelibsPHP",
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
     }
