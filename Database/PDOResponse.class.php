@@ -17,10 +17,13 @@ class PDOResponse {
     }
 
 	/**
+	 * @param int $fetch_style
+	 * @param null $fetch_argument
+	 * @param array $ctor_args
 	 * @return mixed
 	 */
-    public function fetchAll(){
-        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
+    public function fetchAll($fetch_style=PDO::FETCH_ASSOC, $fetch_argument=null){
+        return $this->statement->fetchAll($fetch_style);
     }
 
 	/**

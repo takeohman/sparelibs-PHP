@@ -23,6 +23,10 @@ class Session {
 		return self::$_session_started;
 	}
 
+	public function regenerate($delete_old_session = false){
+		return session_regenerate_id($delete_old_session);
+	}
+
 	/**
 	 *
 	 */

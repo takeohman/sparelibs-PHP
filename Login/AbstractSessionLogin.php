@@ -6,28 +6,27 @@ abstract class AbstractSessionLogin {
 	const SESSION_KEY_LOGIN = '_login_';//field to store hashed password.
 	const SESSION_KEY_NAME = '_name_';
 	
-	protected $mSession;
+	protected $session;
 
-    /**
-     *
-     */
-    public function __construct() {
-		$this->mSession = Session::createSessionObject();
-		$this->mSession->start();
+	/**
+	 * @param Session $session
+	 */
+    public function __construct($session) {
+		$this->session = $session;
+		$this->session->start();
 	}
 	/**
 	 * Return a hashed string
-     * @param string $inPass
+     * @param string $pass
 	 * @return string
 	 */
-	abstract protected function _getHashedPassword($inPass);
+	abstract protected function _getHashedPassword($pass);
 	
 	/**
-	 * @param string $inUser
-     * @param string $inPass
+	 * @param string $user
 	 * @return array or false
 	 */
-	abstract public function getAccountInfo($inUser, $inPass);
+	abstract protected function _getAccountInfo($user);
 
 
     /**
@@ -37,7 +36,7 @@ abstract class AbstractSessionLogin {
      */
     public function login($inUser, $inPass){
 		//DBなどからユーザー・ハッシュ済みパスワードを取得
-		$userAccountInfo = $this->getAccountInfo($inUser, $inPass);
+		$userAccountInfo = $this->_getAccountInfo($inUser, $inPass);
 		if ( $userAccountInfo === false){
 			return false;
 		}
@@ -50,8 +49,9 @@ abstract class AbstractSessionLogin {
 		   $inUser == $userAccountInfo['user'] && 
 		   $hashedPass == $userAccountInfo['pass']){
 			
-			$this->mSession->set(self::SESSION_KEY_LOGIN, $hashedPass);
-			$this->mSession->set(self::SESSION_KEY_NAME, $inUser);
+			$this->session->set(self::SESSION_KEY_LOGIN, $hashedPass);
+			$this->session->set(self::SESSION_KEY_NAME, $inUser);
+			$this->session->regenerate(true);
 			return true;
 		}
 
@@ -63,8 +63,8 @@ abstract class AbstractSessionLogin {
 	 * @return boolean
 	 */
 	public function isLoggedIn(){
-		if ($this->mSession->get(self::SESSION_KEY_LOGIN,'')!= '' &&
-			$this->mSession->get(self::SESSION_KEY_NAME,'') != '')
+		if ($this->session->get(self::SESSION_KEY_LOGIN,'')!= '' &&
+			$this->session->get(self::SESSION_KEY_NAME,'') != '')
 		{
 			return true;
 		}
@@ -76,6 +76,7 @@ abstract class AbstractSessionLogin {
 	 * @return bool
 	 */
 	public function logout(){
-		return $this->mSession->destroy();
+		$this->session->regenerate(true);
+		return $this->session->destroy();
 	}
 }

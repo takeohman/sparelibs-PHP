@@ -2,16 +2,17 @@
 require_once __DIR__ . '/../Session/Session.php';
 
 class OneTimeTokenChecker{
-	protected $mSessionKey;
-	protected $mSession;
+	protected $sessionKey;
+	protected $session;
 
     /**
-     * @param string $inSessionKey
+	 * @param Session $session
+     * @param string $sessionKey
      */
-    public function __construct($inSessionKey = '_input_check') {
-		$this->mSessionKey = $inSessionKey;
-		$this->mSession = Session::createSessionObject();
-		$this->mSession->start();
+    public function __construct($session, $sessionKey = '_input_check') {
+		$this->session = $session;
+		$this->sessionKey = $sessionKey;
+		$this->session->start();
 	}
 	
 	/**
@@ -19,18 +20,18 @@ class OneTimeTokenChecker{
 	 */
 	public function setOneTimeValue(){
 		$generatedValue = $this->_generateOneTimeValue();
-		$this->mSession->set($this->mSessionKey, $generatedValue);
+		$this->session->set($this->sessionKey, $generatedValue);
 		return $generatedValue;
 	}
 	
 	/**
-	 * @param string $inRequestedValue
+	 * @param string $requestedValue
 	 * @return boolean
 	 */
-	public function check($inRequestedValue){
+	public function check($requestedValue){
 		$checkResult = false;
-		$value = $this->mSession->get($this->mSessionKey);
-		if ($inRequestedValue === $value)
+		$value = $this->session->get($this->sessionKey);
+		if ($requestedValue === $value)
 		{
 			$checkResult = true;
 		}

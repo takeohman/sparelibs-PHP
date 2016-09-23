@@ -4,55 +4,62 @@ require_once __DIR__.'/AbstractSessionLogin.php';
 
 class SessionLogin extends AbstractSessionLogin{
 	const TOKEN_PASS = '7js3a6Jw';
-	protected $mToken;
+	protected $token;
 
 	const DEFAULT_MIN_PASS_LEN = 8;
 	const DEFAULT_MIN_USER_LEN = 4;
-	protected $mMinPassLen = self::DEFAULT_MIN_PASS_LEN;
-	protected $mMinUserLen = self::DEFAULT_MIN_USER_LEN;
+	protected $minPassLen = self::DEFAULT_MIN_PASS_LEN;
+	protected $minUserLen = self::DEFAULT_MIN_USER_LEN;
 	
 	/**
-	 * 
-	 * @param string $inToken
+	 *
+	 * @param Session $session
+	 * @param string $token
 	 */
-	public function __construct($inToken=null) {
+	public function __construct($session, $token=null) {
+		parent::__construct($session);
 		
-		parent::__construct();
-		
-		$this->mToken = self::TOKEN_PASS;
-		if( $inToken != null ){
-			$this->mToken =$inToken;
+		$this->token = self::TOKEN_PASS;
+		if( $token != null ){
+			$this->token =$token;
 		}
 	}
 	
 	/**
 	 * 
-	 * @param string $inPass
+	 * @param string $pass
 	 * @return boolean
 	 */
-	protected function _getHashedPassword($inPass){
-		if (strlen($inPass) >= $this->mMinPassLen){
-			return md5($this->mToken.$inPass);
+	protected function _getHashedPassword($pass){
+		if (strlen($pass) >= $this->minPassLen){
+			return md5($this->token.$pass);
 		}
 		return false;
 	}
 
-	
 	/**
-	 * 
-	 * @param string $inUser
-	 * @param string $inPass
-	 * @return boolean|string
+	 * @param $user
+	 * @param $pass
+	 * @return bool
 	 */
-	public function getAccountInfo($inUser, $inPass){
-		if (strlen($inUser) <= $this->mMinUserLen || strlen($inPass) <= $this->mMinPassLen){
+	public function checkLengthOfUserAndPass($user, $pass){
+		if (strlen($user) < $this->minUserLen || strlen($pass) < $this->minPassLen){
 			return false;
 		}
-		$user['user1'] = 'b79dfc838f2e27ed3386ac228dbaa4fe';//user1pass
-		$user['admin'] = '987b4af679d276e860091462e393abeb';//adminpass
-		
-		if (isset($user[$inUser])){
-			$val = array('user'=>$inUser,'pass'=>$user[$inUser]);
+		return true;
+	}
+
+	/**
+	 * @param $user
+	 * @return array|bool
+	 */
+	protected function _getAccountInfo($user){
+		// Data For Test
+		$users['user1'] = 'b79dfc838f2e27ed3386ac228dbaa4fe';//user1pass
+		$users['admin'] = '1f4a278cbc8758204f5c4a94ab41820d';//adminpass (token=abcde)
+
+		if (isset($users[$user])){
+			$val = array('user'=>$user, 'pass'=>$users[$user]);
 			return $val;
 		}
 		return false;
