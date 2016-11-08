@@ -79,4 +79,8 @@ abstract class AbstractSessionLogin {
 		$this->session->regenerate(true);
 		return $this->session->destroy();
 	}
+
+	public function getSession(){
+		return $this->session;
+	}
 }

@@ -15,6 +15,8 @@ class DateTimeUtilTest extends PHPUnit_Framework_TestCase {
 	 * @covers DateTimeUtil::getDateMySql
 	 */
 	public function testGetDateMySql(){
+
+		date_default_timezone_set("Asia/Tokyo");
 		$obj 		= new DateTimeUtil();
 		$val 		= 1448400000;
 		$actual 	= $obj->getDateMySql($val);
