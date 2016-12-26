@@ -45,4 +45,63 @@ class RequestParserTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
 
 	}
+
+	public function testGetParams(){
+		$expected = array(
+			'script'=> '',
+			'params'=> array()
+		);
+		$actual = RequestParser::getParams('');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		$expected = array(
+			'script'=> 'index.php',
+			'params'=> array()
+		);
+		$actual = RequestParser::getParams('index.php');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		$expected = array(
+			'script'=> 'index.php',
+			'params'=> array()
+		);
+		$actual = RequestParser::getParams('index.php?');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		$expected = array(
+			'script'=> 'index.php',
+			'params'=> array()
+		);
+		$actual = RequestParser::getParams('index.php?p1');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		$expected = array(
+			'script'=> 'index.php',
+			'params'=> array(
+				'p1' => '',
+			)
+		);
+		$actual = RequestParser::getParams('index.php?p1=');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		$expected = array(
+			'script'=> '',
+			'params'=> array(
+				'p1' => 'param1',
+				'p2' => 'param2'
+			)
+		);
+		$actual = RequestParser::getParams('?p1=param1&p2=param2');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+
+		$expected = array(
+			'script'=> 'index.php',
+			'params'=> array(
+				'p1' => 'param1',
+				'p2' => 'param2'
+			)
+		);
+		$actual = RequestParser::getParams('index.php?p1=param1&p2=param2');
+		$this->assertEquals($expected, $actual, __CLASS__. "::" . __METHOD__ . ": line " . __LINE__);
+	}
 }

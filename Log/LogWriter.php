@@ -9,7 +9,8 @@
 
 class LogWriter {
 	protected $log_file_path;
-	protected $flags = FILE_APPEND | LOCK_EX;
+//	protected $flags = (FILE_APPEND|LOCK_EX);
+	protected $flags = FILE_APPEND;
 
 	/**
 	 * @param string $file_path
@@ -28,6 +29,16 @@ class LogWriter {
 	 */
 	public function write_data($data){
 		return $this->_write_data($data, $this->flags);
+	}
+
+	public function write_line($line){
+		return $this->_write_data($line.PHP_EOL, $this->flags);
+	}
+
+
+	public function write_line_with_Ymd($line){
+		$date = @date('Y-m-d h:i:s');
+		return $date . " " . $this->write_line($line);
 	}
 
 	/**
