@@ -6,7 +6,7 @@
  * Time: 2:54
  */
 
-require_once __DIR__ . '/../../Log/LogWriter.php';
+require_once __DIR__ . '/../../Log/LogWriter.class.php';
 
 class LogWriterForTest extends LogWriter{
 	public function protected_write_data($data, $flags=FILE_APPEND){

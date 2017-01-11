@@ -1,6 +1,6 @@
 <?php
 
-class ClassRoutingTable {
+class RoutingTable {
 	protected $table;
 	public function __construct($table){
 		$this->table = $table;

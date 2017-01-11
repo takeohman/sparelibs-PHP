@@ -5,12 +5,12 @@
  * Date: 2017/01/11
  * Time: 20:28
  */
-require_once __DIR__ . '/../../ClassObject/ClassRoutingTable.class.php';
+require_once __DIR__ . '/../../Router/RoutingTable.class.php';
 
-class ClassRoutingTableTest extends PHPUnit_Framework_TestCase {
+class RoutingTableTest extends PHPUnit_Framework_TestCase {
 	public function test_getFileName(){
 
-		$obj = new ClassRoutingTable(
+		$obj = new RoutingTable(
 			array(
 				'search'=>'SearchClass',
 				'edit'=>'EditClass'

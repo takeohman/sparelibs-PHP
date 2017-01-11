@@ -6,7 +6,7 @@
  * Time: 9:03
  */
 
-require_once __DIR__ . '/../../File/LocalFileListGetter.php';
+require_once __DIR__ . '/../../File/LocalFileListGetter.class.php';
 
 class LocalFileListGetterTest extends PHPUnit_Framework_TestCase {
 

@@ -6,7 +6,7 @@
  * Time: 2:07
  */
 
-require_once('../../Login/SessionLogin.php');
+require_once('../../Login/SessionLogin.class.php');
 
 class SessionLoginTest extends PHPUnit_Framework_TestCase {
 	public function testCheckLengthOfUserAndPass(){

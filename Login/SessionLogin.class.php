@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/AbstractSessionLogin.php';
+require_once __DIR__ . '/AbstractSessionLogin.class.php';
 
 class SessionLogin extends AbstractSessionLogin{
 	const TOKEN_PASS = '7js3a6Jw';

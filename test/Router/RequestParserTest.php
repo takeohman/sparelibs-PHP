@@ -5,8 +5,8 @@
  * Date: 2016/09/26
  * Time: 9:15
  */
-require_once __DIR__ . '/../../Router/RequestParser.php';
-require_once __DIR__ . '/../../Server/ServerInfo.php';
+require_once __DIR__ . '/../../Router/RequestParser.class.php';
+require_once __DIR__ . '/../../Server/ServerInfo.class.php';
 
 class RequestParserTest extends PHPUnit_Framework_TestCase {
 	const PREFIX_DATA				= 'DATA_';

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../Session/Session.php';
+require_once __DIR__ . '/../Session/Session.class.php';
 
 class OneTimeTokenChecker{
 	protected $sessionKey;

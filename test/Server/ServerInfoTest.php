@@ -6,7 +6,7 @@
  * Time: 20:27
  */
 
-require_once __DIR__ . '/../../Server/ServerInfo.php';
+require_once __DIR__ . '/../../Server/ServerInfo.class.php';
 
 class ServerInfoTest extends PHPUnit_Framework_TestCase {
 
